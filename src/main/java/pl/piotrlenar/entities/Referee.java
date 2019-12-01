@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.pl.PESEL;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Component;
+import pl.piotrlenar.model.RefereeDto;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -17,43 +18,42 @@ import java.time.LocalDate;
 @Component
 @Table(name = "referees")
 public class Referee {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank
     private String firstName;
-
-    @NotBlank
     private String lastName;
-
-    @NotBlank
     private LocalDate dateOfBirth;
-
-    @NotBlank
     private String city;
-
-    @NotBlank
     private String postalCode;
-
     private String street;
-
     private String localNumber;
-
     private int numberOfMatches;
-
-    @NotBlank
     private String division;
-
-    @PESEL
     private String pesel;
-
-    @NotBlank
     private String hashedPassword;
+    private int phoneNumber;
 
-    @NotBlank
-    @Email
+    @Column(unique = true)
     private String email;
+
+    public Referee(RefereeDto refereeDto) {
+        this.firstName = refereeDto.getFirstName();
+        this.lastName = refereeDto.getLastName();
+        setPassword(refereeDto.getPassword());
+        this.dateOfBirth = refereeDto.getDateOfBirth();
+        this.city = refereeDto.getCity();
+        this.postalCode = refereeDto.getPostalCode();
+        this.street = refereeDto.getStreet();
+        this.localNumber = refereeDto.getLocalNumber();
+        this.numberOfMatches = refereeDto.getNumberOfMatches();
+        this.division = refereeDto.getDivision();
+        this.pesel = refereeDto.getPesel();
+        this.phoneNumber = refereeDto.getPhoneNumber();
+        this.email = refereeDto.getEmail();
+
+    }
 
     public boolean isPasswordCorrect(String candidate) {
         return BCrypt.checkpw(candidate, this.hashedPassword);
